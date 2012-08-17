@@ -50,7 +50,7 @@
     $('#download').click(function(){
     filepicker.saveAs(
       "<%= @url %>",
-        'video/x-flv',
+        'video/mp4',
         function(url){
         $('#saveResult a').attr('href', url).html(url);
         });
