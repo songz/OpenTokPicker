@@ -1,3 +1,9 @@
 .container {
   text-align: center;
   margin-top: 80px; }
+
+a {
+  text-decoration: none; }
+
+a:hover {
+  text-decoration: none; }

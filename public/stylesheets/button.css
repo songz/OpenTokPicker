@@ -19,6 +19,7 @@
 	padding:32px 76px;
 	text-decoration:none;
 	text-shadow:3px 3px 0px #b23e35;
+  cursor:pointer;
 }.recordButton:hover {
 	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ce0100), color-stop(1, #fe1a00) );
 	background:-moz-linear-gradient( center top, #ce0100 5%, #fe1a00 100% );

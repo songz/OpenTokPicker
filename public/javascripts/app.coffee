@@ -1,9 +1,16 @@
+RECORD = "Record Videos"
+RSTOP = "Stop Recording"
+DOWNLOAD = "Process Video"
+PROCESS = "Video Processing..."
+READY = "Download"
+
 key = $('#info').attr('key')
 sessionId = $('#info').attr('session')
 token = $('#info').attr('token')
-idle = true
 
 TB.setLogLevel(TB.DEBUG)
+
+$('#startRecording').text(RECORD)
 
 archiveCreatedHandler = (event) ->
   window.archive = event.archives[0]
@@ -13,19 +20,36 @@ archiveCreatedHandler = (event) ->
 $('#loadArchiveButton').click ->
   session.loadArchive('4f78d4e3-edb6-4d21-92da-dba0f4947202')
 
-$('.recordButton').click ->
+
+parseArchiveResponse = (response) ->
+  console.log response
+  if response.status == "fail"
+    setTimeout(getDownloadUrl(window.archive.archiveId), 5000)
+  else
+    $('#startRecording').text(READY)
+    $('#startRecording').attr('href', response.url)
+
+getDownloadUrl = ->
+  $.post "/archive/#{window.archive.archiveId}", {}, parseArchiveResponse
+
+$('#startRecording').click ->
   console.log "button click"
   console.log window.archive
-  if idle
-    if window.archive==""
-      session.createArchive( key, 'perSession', "#{Date.now()}")
-    else
-      session.startRecording(window.archive)
-    idle = false
-  else
-    session.stopRecording( window.archive )
-    session.closeArchive( window.archive )
-    idle = true
+  switch $(@).text()
+    when RECORD
+      if window.archive==""
+        session.createArchive( key, 'perSession', "#{Date.now()}")
+      else
+        session.startRecording(window.archive)
+      $(@).text(RSTOP)
+    when RSTOP
+      session.stopRecording( window.archive )
+      session.closeArchive( window.archive )
+      $(@).text(DOWNLOAD)
+    when DOWNLOAD
+      $(@).text(PROCESS)
+      console.log window.archive
+      setTimeout(getDownloadUrl(window.archive.archiveId), 5000)
 
 archiveLoadedHandler = (event) ->
   window.archive = event.archives[0]
