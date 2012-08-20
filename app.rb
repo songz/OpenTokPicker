@@ -4,9 +4,10 @@ require 'opentok'
 require 'httparty'
 require 'json'
 
-OTKey = ENV['TB_KEY']
-OTSecret = ENV['TB_SECRET']
-FPKey = ENV['FP_KEY_L']
+OTKey = ENV['TB_KEY'] # Enter you OpenTok Key Here
+OTSecret = ENV['TB_SECRET'] # Enter your OpenTok Secret Here
+FPKey = ENV['FP_KEY_OpenTokPicker'] # Enter your FilePicker key Here
+
 OTSDK = OpenTok::OpenTokSDK.new OTKey, OTSecret, true
 
 get '/' do

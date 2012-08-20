@@ -31,7 +31,8 @@
     if (response.status !== "fail") {
       window.clearInterval(interval);
       $('#startRecording').text(READY);
-      return downloadURL = response.url;
+      downloadURL = 'http://' + response.url.split('https://')[1];
+      return $('#processingMessage').fadeOut();
     }
   };
 
@@ -66,10 +67,13 @@
       case RSTOP:
         session.stopRecording(window.archive);
         session.closeArchive(window.archive);
-        return $(this).text(PROCESS);
+        $(this).text(PROCESS);
+        return $('#processingMessage').fadeIn();
       case READY:
-        filepicker.saveAs(downloadURL, 'video/mp4', function(url) {});
-        return $(this).remove();
+        $('#endMessage').fadeIn();
+        return filepicker.saveAs(downloadURL, 'video/mp4', function(url) {
+          return $('#endMessage').fadeIn();
+        });
     }
   });
 

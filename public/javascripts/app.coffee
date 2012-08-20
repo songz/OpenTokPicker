@@ -19,7 +19,8 @@ parseArchiveResponse = (response) ->
   if response.status != "fail"
     window.clearInterval(interval)
     $('#startRecording').text(READY)
-    downloadURL=response.url
+    downloadURL = 'http://'+response.url.split('https://')[1]
+    $('#processingMessage').fadeOut()
 
 getDownloadUrl = ->
   $.post "/archive/#{window.archive.archiveId}", {}, parseArchiveResponse
@@ -49,9 +50,11 @@ $('#startRecording').click ->
       session.stopRecording( window.archive )
       session.closeArchive( window.archive )
       $(@).text(PROCESS)
+      $('#processingMessage').fadeIn()
     when READY
+      $('#endMessage').fadeIn()
       filepicker.saveAs downloadURL,'video/mp4', (url) ->
-      $(@).remove()
+        $('#endMessage').fadeIn()
 
 archiveLoadedHandler = (event) ->
   window.archive = event.archives[0]
