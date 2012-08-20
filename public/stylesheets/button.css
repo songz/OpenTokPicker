@@ -12,7 +12,7 @@
 	border-radius:42px;
 	border:1px solid #d83526;
 	display:inline-block;
-	color:#ffffff;
+	color:#113;
 	font-family:arial;
 	font-size:28px;
 	font-weight:bold;
@@ -25,6 +25,7 @@
 	background:-moz-linear-gradient( center top, #ce0100 5%, #fe1a00 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ce0100', endColorstr='#fe1a00');
 	background-color:#ce0100;
+	color:#050512;
 }.recordButton:active {
 	position:relative;
 	top:1px;

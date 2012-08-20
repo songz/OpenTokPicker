@@ -4,33 +4,36 @@ DOWNLOAD = "Process Video"
 PROCESS = "Video Processing..."
 READY = "Download"
 
+interval = ""
 key = $('#info').attr('key')
 sessionId = $('#info').attr('session')
 token = $('#info').attr('token')
+downloadURL=""
 
 TB.setLogLevel(TB.DEBUG)
 
+filepicker.setKey( $('#info').attr('FPKey') )
+
+parseArchiveResponse = (response) ->
+  console.log response
+  if response.status != "fail"
+    window.clearInterval(interval)
+    $('#startRecording').text(READY)
+    downloadURL=response.url
+
+getDownloadUrl = ->
+  $.post "/archive/#{window.archive.archiveId}", {}, parseArchiveResponse
+
 $('#startRecording').text(RECORD)
+
+archiveClosedHandler = (event) ->
+  console.log window.archive
+  interval = window.setInterval(getDownloadUrl, 5000)
 
 archiveCreatedHandler = (event) ->
   window.archive = event.archives[0]
   session.startRecording(window.archive)
   console.log window.archive
-
-$('#loadArchiveButton').click ->
-  session.loadArchive('4f78d4e3-edb6-4d21-92da-dba0f4947202')
-
-
-parseArchiveResponse = (response) ->
-  console.log response
-  if response.status == "fail"
-    setTimeout(getDownloadUrl(window.archive.archiveId), 5000)
-  else
-    $('#startRecording').text(READY)
-    $('#startRecording').attr('href', response.url)
-
-getDownloadUrl = ->
-  $.post "/archive/#{window.archive.archiveId}", {}, parseArchiveResponse
 
 $('#startRecording').click ->
   console.log "button click"
@@ -45,11 +48,10 @@ $('#startRecording').click ->
     when RSTOP
       session.stopRecording( window.archive )
       session.closeArchive( window.archive )
-      $(@).text(DOWNLOAD)
-    when DOWNLOAD
       $(@).text(PROCESS)
-      console.log window.archive
-      setTimeout(getDownloadUrl(window.archive.archiveId), 5000)
+    when READY
+      filepicker.saveAs downloadURL,'video/mp4', (url) ->
+      $(@).remove()
 
 archiveLoadedHandler = (event) ->
   window.archive = event.archives[0]
@@ -78,6 +80,7 @@ session = TB.initSession(sessionId)
 session.addEventListener( 'sessionConnected', sessionConnectedHandler )
 session.addEventListener( 'streamCreated', streamCreatedHandler )
 session.addEventListener( 'archiveCreated', archiveCreatedHandler )
+session.addEventListener( 'archiveClosed', archiveClosedHandler )
 session.addEventListener( 'archiveLoaded', archiveLoadedHandler )
 session.connect( key, token )
 

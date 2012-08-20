@@ -4,8 +4,9 @@ require 'opentok'
 require 'httparty'
 require 'json'
 
-OTKey = '11421872'
-OTSecret = '296cebc2fc4104cd348016667ffa2a3909ec636f'
+OTKey = ENV['TB_KEY']
+OTSecret = ENV['TB_SECRET']
+FPKey = ENV['FP_KEY_L']
 OTSDK = OpenTok::OpenTokSDK.new OTKey, OTSecret, true
 
 get '/' do
@@ -17,12 +18,6 @@ get '/filepicker/:ignore' do
   erb :filepicker
 end
 
-#get '/' do
-#  response = HTTParty.post("https://api.opentok.com/hl/archive/4f78d4e3-edb6-4d21-92da-dba0f4947202/stitch", :headers=>{'X-TB-PARTNER-AUTH'=>"#{OTKey}:#{OTSecret}"} )
-#  @url = "http" + response['location'].split('https')[1]
-#  erb :brett
-#end
-
 post '/archive/:aid' do
   token= params['token']
   aid= params[:aid]
@@ -30,6 +25,7 @@ post '/archive/:aid' do
   response = HTTParty.post("https://api.opentok.com/hl/archive/#{aid}/stitch", :headers=>{'X-TB-PARTNER-AUTH'=>"#{OTKey}:#{OTSecret}"} )
   content_type :json
   printa response.code
+  printa response
   if response.code==201
     printa response['location']
     return {:status=>"success", :url=>response['location']}.to_json
@@ -39,6 +35,7 @@ end
 
 get '/:session' do
   @key = OTKey
+  @FPKey = FPKey
   @session = params[:session]
   @token = OTSDK.generateToken( {:session_id=> @session, :role=>OpenTok::RoleConstants::MODERATOR, :expire_time=>Time.now.to_i + 604800} )
   erb :index

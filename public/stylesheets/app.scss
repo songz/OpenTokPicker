@@ -1,12 +1,43 @@
+body{
+  background-image:url(/images/asfalt.png);
+}
 .container{
   text-align:center;
-  margin-top: 80px;
 }
 
+
+#pubContainer{
+  padding: 20px;
+  background-color:rgba(10,14,19,0.3);
+}
 a{
   text-decoration:none;
 }
 a:hover{
   text-decoration:none;
 }
+#logo{
+  margin-top:40px;
+  margin-bottom:50px;
+  text-align:center;
+}
+#shareURL{
+  position:fixed;
+  top:0px;
+  left: 40px;
+  z-index:-1;
+}
+#shareURL img{
+  width:150px;
+}
 
+#processingMessage{
+  margin-top:20px;
+}
+
+#endMessage{
+  font-size: 24px;
+  line-height:100%;
+  margin-top:20px;
+  margin-bottom:20px;
+}
