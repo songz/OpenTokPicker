@@ -1,3 +1,11 @@
+@mixin vendor-prefix($name, $args){
+  #{$name}:$args;
+  -webkit-#{$name}:$args;
+  -ms-#{$name}:$args;
+  -moz-#{$name}:$args;
+  -o-#{$name}:$args;
+}
+
 body{
   background-image:url(/images/asfalt.png);
 }
@@ -40,10 +48,9 @@ a:hover{
 }
 
 #endMessage{
-  display:none;
   font-size: 24px;
   line-height:100%;
-  margin-top:20px;
+  margin-top:30px;
   margin-bottom:20px;
 }
 
@@ -59,7 +66,7 @@ a:hover{
     font-size: 13px;
   }
   .devContent{
-    box-sizing: border-box;
+    @include vendor-prefix(box-sizing, border-box);
     float:left;
     padding:0 8px 8px 8px;
   }

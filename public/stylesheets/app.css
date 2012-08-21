@@ -36,10 +36,9 @@ a:hover {
   display: none; }
 
 #endMessage {
-  display: none;
   font-size: 24px;
   line-height: 100%;
-  margin-top: 20px;
+  margin-top: 30px;
   margin-bottom: 20px; }
 
 #developerProfile {
@@ -54,6 +53,10 @@ a:hover {
     font-size: 13px; }
   #developerProfile .devContent {
     box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
     float: left;
     padding: 0 8px 8px 8px; }
   #developerProfile #developerPic {
