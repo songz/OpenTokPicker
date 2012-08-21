@@ -47,7 +47,11 @@ a:hover {
   right: 15px;
   background-color: rgba(10, 14, 19, 0.8);
   width: 120px;
-  border-radius: 10px; }
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -o-border-radius: 10px; }
   #developerProfile h1 {
     text-align: center;
     font-size: 13px; }
@@ -74,3 +78,17 @@ a:hover {
     text-align: center; }
     #developerProfile #socialIcons img {
       width: 20px; }
+
+.initialButton {
+  margin-top: 60px;
+  border-radius: 42px;
+  -webkit-border-radius: 42px;
+  -ms-border-radius: 42px;
+  -moz-border-radius: 42px;
+  -o-border-radius: 42px;
+  border: 5px dotted #222;
+  display: inline-block;
+  color: #222;
+  font-size: 28px;
+  font-weight: bold;
+  padding: 32px 76px; }

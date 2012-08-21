@@ -36,26 +36,6 @@ archiveCreatedHandler = (event) ->
   session.startRecording(window.archive)
   console.log window.archive
 
-$('#startRecording').click ->
-  console.log "button click"
-  console.log window.archive
-  switch $(@).text()
-    when RECORD
-      if window.archive==""
-        session.createArchive( key, 'perSession', "#{Date.now()}")
-      else
-        session.startRecording(window.archive)
-      $(@).text(RSTOP)
-    when RSTOP
-      session.stopRecording( window.archive )
-      session.closeArchive( window.archive )
-      $(@).text(PROCESS)
-      $('#processingMessage').fadeIn()
-    when READY
-      $('#endMessage').fadeIn()
-      filepicker.saveAs downloadURL,'video/mp4', (url) ->
-        $('#endMessage').fadeIn()
-
 archiveLoadedHandler = (event) ->
   window.archive = event.archives[0]
   window.archive.startPlayback()
@@ -72,8 +52,30 @@ sessionConnectedHandler = (event) ->
   console.log event.archives
   if event.archives[0]
     window.archive=event.archives[0]
-  session.publish( publisher )
   subscribeStreams(event.streams)
+  session.publish( publisher )
+  if event.streams.length == 0
+    $('#startRecording').addClass('recordButton')
+    $('#startRecording').removeClass('initialButton')
+    $('#startRecording').click ->
+      console.log "button click"
+      console.log window.archive
+      switch $(@).text()
+        when RECORD
+          if window.archive==""
+            session.createArchive( key, 'perSession', "#{Date.now()}")
+          else
+            session.startRecording(window.archive)
+          $(@).text(RSTOP)
+        when RSTOP
+          session.stopRecording( window.archive )
+          session.closeArchive( window.archive )
+          $(@).text(PROCESS)
+          $('#processingMessage').fadeIn()
+        when READY
+          $('#endMessage').fadeIn()
+          filepicker.saveAs downloadURL,'video/mp4', (url) ->
+            $('#endMessage').fadeIn()
 streamCreatedHandler = (event) ->
   subscribeStreams(event.streams)
 
@@ -87,3 +89,5 @@ session.addEventListener( 'archiveClosed', archiveClosedHandler )
 session.addEventListener( 'archiveLoaded', archiveLoadedHandler )
 session.connect( key, token )
 
+$('#refresh').click ->
+  window.location = window.location

@@ -53,30 +53,6 @@
     return console.log(window.archive);
   };
 
-  $('#startRecording').click(function() {
-    console.log("button click");
-    console.log(window.archive);
-    switch ($(this).text()) {
-      case RECORD:
-        if (window.archive === "") {
-          session.createArchive(key, 'perSession', "" + (Date.now()));
-        } else {
-          session.startRecording(window.archive);
-        }
-        return $(this).text(RSTOP);
-      case RSTOP:
-        session.stopRecording(window.archive);
-        session.closeArchive(window.archive);
-        $(this).text(PROCESS);
-        return $('#processingMessage').fadeIn();
-      case READY:
-        $('#endMessage').fadeIn();
-        return filepicker.saveAs(downloadURL, 'video/mp4', function(url) {
-          return $('#endMessage').fadeIn();
-        });
-    }
-  });
-
   archiveLoadedHandler = function(event) {
     window.archive = event.archives[0];
     return window.archive.startPlayback();
@@ -103,8 +79,35 @@
     if (event.archives[0]) {
       window.archive = event.archives[0];
     }
+    subscribeStreams(event.streams);
     session.publish(publisher);
-    return subscribeStreams(event.streams);
+    if (event.streams.length === 0) {
+      $('#startRecording').addClass('recordButton');
+      $('#startRecording').removeClass('initialButton');
+      return $('#startRecording').click(function() {
+        console.log("button click");
+        console.log(window.archive);
+        switch ($(this).text()) {
+          case RECORD:
+            if (window.archive === "") {
+              session.createArchive(key, 'perSession', "" + (Date.now()));
+            } else {
+              session.startRecording(window.archive);
+            }
+            return $(this).text(RSTOP);
+          case RSTOP:
+            session.stopRecording(window.archive);
+            session.closeArchive(window.archive);
+            $(this).text(PROCESS);
+            return $('#processingMessage').fadeIn();
+          case READY:
+            $('#endMessage').fadeIn();
+            return filepicker.saveAs(downloadURL, 'video/mp4', function(url) {
+              return $('#endMessage').fadeIn();
+            });
+        }
+      });
+    }
   };
 
   streamCreatedHandler = function(event) {
@@ -128,5 +131,9 @@
   session.addEventListener('archiveLoaded', archiveLoadedHandler);
 
   session.connect(key, token);
+
+  $('#refresh').click(function() {
+    return window.location = window.location;
+  });
 
 }).call(this);
