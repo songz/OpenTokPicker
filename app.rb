@@ -19,14 +19,24 @@ post '/archive/:aid' do
   token= params['token']
   aid= params[:aid]
   otArchive = OTSDK.get_archive_manifest(aid, token)
-  response = HTTParty.post("https://api.opentok.com/hl/archive/#{aid}/stitch", :headers=>{'X-TB-PARTNER-AUTH'=>"#{OTKey}:#{OTSecret}"} )
   content_type :json
-  printa response
-  if response.code==201
-    printa response['location']
-    return {:status=>"success", :url=>response['location']}.to_json
+  if otArchive.resources.length < 2
+    otVideoResource = otArchive.resources[0]
+    videoId = otVideoResource.getId()
+    url = otArchive.downloadArchiveURL(videoId, token)
+    printa url
+    if url.split('http').length > 1
+      printa url.split('http')
+      return {:status=>"success", :url=>url}.to_json
+    end
+  else
+    response = OTSDK.stitchArchive(aid)
+    if response[:code]==201
+      printa response
+      return {:status=>"success", :url=>response[:location]}.to_json
+    end
+    return {:status=>"fail"}.to_json
   end
-  return {:status=>"fail"}.to_json
 end
 
 get '/:session' do

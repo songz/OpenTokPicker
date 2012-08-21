@@ -24,7 +24,7 @@ parseArchiveResponse = (response) ->
     $('#processingMessage').fadeOut()
 
 getDownloadUrl = ->
-  $.post "/archive/#{window.archive.archiveId}", {}, parseArchiveResponse
+  $.post "/archive/#{window.archive.archiveId}", {token:$('#info').attr('token')}, parseArchiveResponse
 
 setRecordingCapability = ->
     $('#startRecording').text(RECORD)
@@ -47,7 +47,7 @@ setRecordingCapability = ->
           $('#processingMessage').fadeIn()
         when READY
           $('#endMessage').fadeIn()
-          filepicker.saveAs downloadURL,'video/mp4', (url) ->
+          filepicker.saveAs downloadURL,'', (url) ->
             $('#endMessage').fadeIn()
 
 archiveClosedHandler = (event) ->

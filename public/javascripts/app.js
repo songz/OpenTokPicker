@@ -39,7 +39,9 @@
   };
 
   getDownloadUrl = function() {
-    return $.post("/archive/" + window.archive.archiveId, {}, parseArchiveResponse);
+    return $.post("/archive/" + window.archive.archiveId, {
+      token: $('#info').attr('token')
+    }, parseArchiveResponse);
   };
 
   setRecordingCapability = function() {
@@ -64,7 +66,7 @@
           return $('#processingMessage').fadeIn();
         case READY:
           $('#endMessage').fadeIn();
-          return filepicker.saveAs(downloadURL, 'video/mp4', function(url) {
+          return filepicker.saveAs(downloadURL, '', function(url) {
             return $('#endMessage').fadeIn();
           });
       }

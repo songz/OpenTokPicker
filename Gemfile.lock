@@ -9,11 +9,11 @@ GEM
     json (1.7.5)
     multi_json (1.3.6)
     multi_xml (0.5.1)
-    opentok (0.0.72)
+    opentok (0.0.73)
     rack (1.4.1)
     rack-protection (1.2.0)
       rack
-    sinatra (1.3.2)
+    sinatra (1.3.3)
       rack (~> 1.3, >= 1.3.6)
       rack-protection (~> 1.2)
       tilt (~> 1.3, >= 1.3.3)
