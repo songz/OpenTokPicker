@@ -15,17 +15,12 @@ get '/' do
   redirect "/#{session}"
 end
 
-get '/filepicker/:ignore' do
-  erb :filepicker
-end
-
 post '/archive/:aid' do
   token= params['token']
   aid= params[:aid]
   otArchive = OTSDK.get_archive_manifest(aid, token)
   response = HTTParty.post("https://api.opentok.com/hl/archive/#{aid}/stitch", :headers=>{'X-TB-PARTNER-AUTH'=>"#{OTKey}:#{OTSecret}"} )
   content_type :json
-  printa response.code
   printa response
   if response.code==201
     printa response['location']
