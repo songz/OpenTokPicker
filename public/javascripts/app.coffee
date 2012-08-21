@@ -9,6 +9,7 @@ key = $('#info').attr('key')
 sessionId = $('#info').attr('session')
 token = $('#info').attr('token')
 downloadURL=""
+users = 0
 
 TB.setLogLevel(TB.DEBUG)
 
@@ -25,7 +26,29 @@ parseArchiveResponse = (response) ->
 getDownloadUrl = ->
   $.post "/archive/#{window.archive.archiveId}", {}, parseArchiveResponse
 
-$('#startRecording').text(RECORD)
+setRecordingCapability = ->
+    $('#startRecording').text(RECORD)
+    $('#startRecording').addClass('recordButton')
+    $('#startRecording').removeClass('initialButton')
+    $('#startRecording').click ->
+      console.log "button click"
+      console.log window.archive
+      switch $(@).text()
+        when RECORD
+          if window.archive==""
+            session.createArchive( key, 'perSession', "#{Date.now()}")
+          else
+            session.startRecording(window.archive)
+          $(@).text(RSTOP)
+        when RSTOP
+          session.stopRecording( window.archive )
+          session.closeArchive( window.archive )
+          $(@).text(PROCESS)
+          $('#processingMessage').fadeIn()
+        when READY
+          $('#endMessage').fadeIn()
+          filepicker.saveAs downloadURL,'video/mp4', (url) ->
+            $('#endMessage').fadeIn()
 
 archiveClosedHandler = (event) ->
   console.log window.archive
@@ -48,42 +71,29 @@ subscribeStreams = (streams) ->
     div = $('<div />', {id:divId})
     $('#pubContainer').append(div)
     session.subscribe(stream, divId)
+    users += 1
 sessionConnectedHandler = (event) ->
   console.log event.archives
   if event.archives[0]
     window.archive=event.archives[0]
   subscribeStreams(event.streams)
   session.publish( publisher )
-  if event.streams.length == 0
-    $('#startRecording').addClass('recordButton')
-    $('#startRecording').removeClass('initialButton')
-    $('#startRecording').click ->
-      console.log "button click"
-      console.log window.archive
-      switch $(@).text()
-        when RECORD
-          if window.archive==""
-            session.createArchive( key, 'perSession', "#{Date.now()}")
-          else
-            session.startRecording(window.archive)
-          $(@).text(RSTOP)
-        when RSTOP
-          session.stopRecording( window.archive )
-          session.closeArchive( window.archive )
-          $(@).text(PROCESS)
-          $('#processingMessage').fadeIn()
-        when READY
-          $('#endMessage').fadeIn()
-          filepicker.saveAs downloadURL,'video/mp4', (url) ->
-            $('#endMessage').fadeIn()
+  users = event.streams.length
+  if users==0
+    setRecordingCapability()
 streamCreatedHandler = (event) ->
   subscribeStreams(event.streams)
+streamDestroyedHandler = (event) ->
+  users -= 1
+  if users==0 # including myself
+    setRecordingCapability()
 
 window.archive = ""
 publisher = TB.initPublisher( key, 'myPublisherDiv' )
 session = TB.initSession(sessionId)
 session.addEventListener( 'sessionConnected', sessionConnectedHandler )
 session.addEventListener( 'streamCreated', streamCreatedHandler )
+session.addEventListener( 'streamDestroyed', streamDestroyedHandler )
 session.addEventListener( 'archiveCreated', archiveCreatedHandler )
 session.addEventListener( 'archiveClosed', archiveClosedHandler )
 session.addEventListener( 'archiveLoaded', archiveLoadedHandler )
