@@ -8,7 +8,7 @@ OTKey = ENV['TB_KEY'] # Enter you OpenTok Key Here
 OTSecret = ENV['TB_SECRET'] # Enter your OpenTok Secret Here
 FPKey = ENV['FP_KEY_OpenTokPicker'] # Enter your FilePicker key Here
 
-OTSDK = OpenTok::OpenTokSDK.new OTKey, OTSecret, true
+OTSDK = OpenTok::OpenTokSDK.new OTKey, OTSecret
 
 get '/' do
   session = OTSDK.createSession(request.ip)
@@ -18,7 +18,9 @@ end
 post '/archive/:aid' do
   token= params['token']
   aid= params[:aid]
+  p token
   otArchive = OTSDK.get_archive_manifest(aid, token)
+  p otArchive
   content_type :json
   if otArchive.resources.length < 2
     otVideoResource = otArchive.resources[0]
